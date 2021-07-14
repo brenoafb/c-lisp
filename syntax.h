@@ -4,16 +4,22 @@
 #define NUM 1
 #define LIST 2
 
-typedef union contents
+union contents
 {
   char *atom;
   int num;
-} contents;
+};
 
-typedef struct expr
+typedef union contents contents;
+
+struct expr
 {
   int tag;
-  contents c; // used for nums and atoms
+  /* used for nums and atoms */
+  contents c;
+  /* used for lists */
   int n;
-  struct expr **exprs; // used for lists
-} expr;
+  struct expr **exprs;
+};
+
+typedef struct expr expr;

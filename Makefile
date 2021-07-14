@@ -1,6 +1,8 @@
 SRC = parser.c
 OBJ = ${SRC:.c=.o}
 
+CFLAGS = -Wall -Wextra -Werror -pedantic -ansi -O2
+
 all: lisp
 
 $(OBJ): $(SRC)

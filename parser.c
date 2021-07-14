@@ -38,13 +38,16 @@ int is_atom_char(char c) {
 
 expr *parse_atom(char *s, int len, int *i)
 {
+  char buffer[BUFSIZE];
+  expr *e;
+  int j = 0;
+
   if (*i >= len) {
     return NULL;
   }
-  char buffer[BUFSIZE];
-  int j = 0;
-  expr *e = malloc(sizeof(expr));
+  e = malloc(sizeof(expr));
   e->tag = ATOM;
+
   while (*i < len && is_atom_char(s[*i]))
   {
     buffer[j++] = s[*i];
@@ -58,37 +61,40 @@ expr *parse_atom(char *s, int len, int *i)
 
 expr *parse_num(char *s, int len, int *i)
 {
+  expr *e;
+  int k = 0;
   if (*i >= len) {
     return NULL;
   }
-  int k = 0;
+
   while (*i < len && !isspace(s[*i]) && s[*i] != ')')
   {
     if (!isdigit(s[*i]))
     {
-      // error: found non number character
+      /* error: found non number character */
       return NULL;
     }
     k = k * 10 + (s[*i] - '0');
     *i += 1;
   }
-  expr *e = malloc(sizeof(expr));
+  e = malloc(sizeof(expr));
   e->tag = NUM;
   e->c.num = k;
   return e;
 }
 
 expr *parse_list(char *s, int len, int *i) {
-  int counter = 0;
+  int counter;
   expr *curr;
   expr *exprs[MAX_EXPRS];
 
-  *i += 1; // skip '('
+  *i += 1; /* skip '(' */
+  counter = 0;
   while (s[*i] != ')')
   {
     exprs[counter++] = parse_sexpr(s, len, i);
   }
-  *i += 1; // skip ')'
+  *i += 1; /* skip ')' */
   curr = malloc(sizeof(expr));
   curr->tag = LIST;
   curr->exprs = malloc(sizeof(expr *) * counter);
@@ -107,7 +113,7 @@ expr *parse_sexpr(char *s, int len, int *i)
   switch (s[*i])
   {
   case ')':
-    // error: unexpected end of list
+    /* error: unexpected end of list */
     return NULL;
   case '(':
     return parse_list(s, len, i);
@@ -122,7 +128,7 @@ expr *parse_sexpr(char *s, int len, int *i)
     }
     else
     {
-      // error
+      /* error: invalid character */
       return NULL;
     }
   }
@@ -139,6 +145,8 @@ void print_spaces(int n)
 
 void print_sexpr(expr *e, int indent)
 {
+  int i;
+
   print_spaces(indent);
   switch (e->tag)
   {
@@ -150,7 +158,7 @@ void print_sexpr(expr *e, int indent)
     break;
   case LIST:
     printf("(\n");
-    for (int i = 0; i < e->n; i++)
+    for (i = 0; i < e->n; i++)
     {
       print_sexpr(e->exprs[i], indent + 2);
     }
