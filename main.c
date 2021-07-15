@@ -16,6 +16,4 @@ int main(void)
   {
     print_sexpr(e, 0);
   }
-
-  printf("Hello, World!\n");
 }
