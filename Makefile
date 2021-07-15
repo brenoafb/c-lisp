@@ -1,17 +1,16 @@
-SRC = parser.c
-OBJ = ${SRC:.c=.o}
+CFLAGS = -Wall -Wextra -Werror -pedantic -ansi -O2 -I.
+DEPS = utils.h parser.h syntax.h
+OBJ = utils.o parser.o 
 
-CFLAGS = -Wall -Wextra -Werror -pedantic -ansi -O2
+all: main
 
-all: lisp
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(OBJ): $(SRC)
-	$(CC) -c -o $@ $(CFLAGS) $^
-	
-lisp: ${OBJ} main.c
-	${CC} -o $@ main.c ${OBJ}
+main: $(OBJ)
+	$(CC) main.c -o $@ $^ $(CFLAGS)
 
 clean:
-	rm -f ${OBJ} lisp
+	rm -f ${OBJ} main
 
 .PHONY: all clean

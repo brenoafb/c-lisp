@@ -36,6 +36,38 @@ int is_atom_char(char c) {
   );
 }
 
+expr *parse_sexpr(char *s, int len, int *i)
+{
+  skip_spaces(s, len, i);
+
+  if (*i >= len)
+    return NULL;
+
+  switch (s[*i])
+  {
+  case ')':
+    /* error: unexpected end of list */
+    return NULL;
+  case '(':
+    *i += 1; /* skip '(' */
+    return parse_cons(s, len, i);
+  default:
+    if (is_atom_start_char(s[*i]))
+    {
+      return parse_atom(s, len, i);
+    }
+    if (isdigit(s[*i]))
+    {
+      return parse_num(s, len, i);
+    }
+    else
+    {
+      /* error: invalid character */
+      return NULL;
+    }
+  }
+}
+
 expr *parse_atom(char *s, int len, int *i)
 {
   char buffer[BUFSIZE];
@@ -83,86 +115,17 @@ expr *parse_num(char *s, int len, int *i)
   return e;
 }
 
-expr *parse_list(char *s, int len, int *i) {
-  int counter;
+expr *parse_cons(char *s, int len, int *i) {
   expr *curr;
-  expr *exprs[MAX_EXPRS];
 
-  *i += 1; /* skip '(' */
-  counter = 0;
-  while (s[*i] != ')')
-  {
-    exprs[counter++] = parse_sexpr(s, len, i);
-  }
-  *i += 1; /* skip ')' */
+  if (s[*i] == ')') { return NULL; }
+
   curr = malloc(sizeof(expr));
-  curr->tag = LIST;
-  curr->exprs = malloc(sizeof(expr *) * counter);
-  curr->n = counter;
-  memcpy(curr->exprs, exprs, sizeof(expr *) * counter);
+  curr->tag = CONS;
+
+  /* parse first expr */
+  curr->c.cell.car = parse_sexpr(s, len, i);
+  curr->c.cell.cdr = parse_cons(s, len, i);
+
   return curr;
-}
-
-expr *parse_sexpr(char *s, int len, int *i)
-{
-  skip_spaces(s, len, i);
-
-  if (*i >= len)
-    return NULL;
-
-  switch (s[*i])
-  {
-  case ')':
-    /* error: unexpected end of list */
-    return NULL;
-  case '(':
-    return parse_list(s, len, i);
-  default:
-    if (is_atom_start_char(s[*i]))
-    {
-      return parse_atom(s, len, i);
-    }
-    if (isdigit(s[*i]))
-    {
-      return parse_num(s, len, i);
-    }
-    else
-    {
-      /* error: invalid character */
-      return NULL;
-    }
-  }
-}
-
-void print_spaces(int n)
-{
-  while (n > 0)
-  {
-    printf(" ");
-    n--;
-  }
-}
-
-void print_sexpr(expr *e, int indent)
-{
-  int i;
-
-  print_spaces(indent);
-  switch (e->tag)
-  {
-  case ATOM:
-    printf("%s\n", e->c.atom);
-    break;
-  case NUM:
-    printf("%d\n", e->c.num);
-    break;
-  case LIST:
-    printf("(\n");
-    for (i = 0; i < e->n; i++)
-    {
-      print_sexpr(e->exprs[i], indent + 2);
-    }
-    print_spaces(indent);
-    printf(")\n");
-  }
 }

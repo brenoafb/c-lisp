@@ -20,7 +20,7 @@ expr *parse_atom(char *s, int len, int *i);
 
 expr *parse_num(char *s, int len, int *i);
 
-expr *parse_list(char *s, int len, int *i);
+expr *parse_cons(char *s, int len, int *i);
 
 expr *parse_sexpr(char *s, int len, int *i);
 
