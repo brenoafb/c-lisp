@@ -32,6 +32,9 @@ void print_sexpr(expr *e, int indent)
   print_spaces(indent);
   switch (e->tag)
   {
+  case NIL:
+    printf("nil\n");
+    break;
   case ATOM:
     printf("%s\n", e->c.atom);
     break;

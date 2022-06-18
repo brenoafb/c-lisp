@@ -22,7 +22,7 @@ int is_atom_start_char(char c) {
   );
 }
 
-int is_atom_char(char c) { 
+int is_atom_char(char c) {
   return (isalnum(c)
     || c == '_'
     || c == '-'
@@ -116,14 +116,17 @@ expr *parse_num(char *s, int len, int *i)
 }
 
 expr *parse_cons(char *s, int len, int *i) {
-  expr *curr;
+  expr *curr, *e;
 
-  if (s[*i] == ')') { return NULL; }
+  if (s[*i] == ')') {
+    e = malloc(sizeof(expr));
+    e->tag = NIL;
+    return e;
+  }
 
   curr = malloc(sizeof(expr));
   curr->tag = CONS;
 
-  /* parse first expr */
   curr->c.cell.car = parse_sexpr(s, len, i);
   curr->c.cell.cdr = parse_cons(s, len, i);
 

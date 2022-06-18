@@ -1,6 +1,6 @@
-CFLAGS = -Wall -Wextra -Werror -pedantic -ansi -O2 -I.
-DEPS = utils.h parser.h syntax.h
-OBJ = utils.o parser.o 
+CFLAGS = -Wall -Wextra -Werror -pedantic -ansi -O2 -I. -g
+DEPS = utils.h parser.h syntax.h interpreter.h
+OBJ = utils.o parser.o syntax.o interpreter.o
 
 all: main
 

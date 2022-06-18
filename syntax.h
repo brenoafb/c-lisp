@@ -1,8 +1,11 @@
 #pragma once
 
-#define ATOM 0
-#define NUM 1
-#define CONS 2
+#include <string.h>
+
+#define NIL  0
+#define ATOM 1
+#define NUM  2
+#define CONS 3
 
 struct expr;
 
@@ -29,3 +32,7 @@ struct expr
 };
 
 typedef struct expr expr;
+
+expr *car(expr *e);
+expr *cdr(expr *e);
+int is_atom(expr *e, char *atom);

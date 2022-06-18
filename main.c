@@ -1,11 +1,12 @@
 #include "syntax.h"
 #include "parser.h"
+#include "interpreter.h"
 #include "utils.h"
 
 int main(void)
 {
-  expr *e;
-  char *s = "(+ 1 22 3213)";
+  expr *e, *result;
+  char *s = "(+ 1 (+ 2 3))";
   int len = strlen(s);
   int i = 0;
 
@@ -17,6 +18,10 @@ int main(void)
   else
   {
     print_sexpr(e, 0);
+    traverse(e);
+    result = eval(e);
+    printf("Result:\n");
+    print_sexpr(result, 0);
   }
 
   dealloc(e);
