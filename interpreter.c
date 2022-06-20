@@ -2,7 +2,7 @@
 #include "parser.h"
 #include "utils.h"
 
-expr *eval(expr *e) {
+expr *eval(env *env, expr *e) {
   expr *op, *e1, *e2, *result;
   int x1, x2;
 
@@ -16,9 +16,9 @@ expr *eval(expr *e) {
 
   /* assuming we have a cons */
 
-  op = eval(car(e));
-  e1 = eval(car(cdr(e)));
-  e2 = eval(car(cdr(cdr(e))));
+  op = eval(env, car(e));
+  e1 = eval(env, car(cdr(e)));
+  e2 = eval(env, car(cdr(cdr(e))));
 
   if (!(op->tag == ATOM && e1->tag == NUM && e2->tag == NUM)) {
     return NULL;

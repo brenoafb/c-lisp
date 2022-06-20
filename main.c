@@ -19,7 +19,7 @@ int main(void)
   {
     print_sexpr(e, 0);
     traverse(e);
-    result = eval(e);
+    result = eval(NULL, e);
     printf("Result:\n");
     print_sexpr(result, 0);
   }
