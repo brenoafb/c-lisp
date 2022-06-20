@@ -104,7 +104,7 @@ int main(void) {
     }
     free(line);
 
-    if (memused >= 0.9 * MEMSIZE) {
+    if (memused >= 0.8 * MEMSIZE) {
       printf("Memory almost full (%lu/%lu bytes); running gc\n", memused * sizeof(expr), MEMSIZE * sizeof(expr));
       gc(&env);
       printf("Usage after gc: %lu\n", memused * sizeof(expr));

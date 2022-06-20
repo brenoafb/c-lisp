@@ -24,6 +24,7 @@ expr *alloc() {
     }
   }
   /* TODO handle case where we have no free space */
+  printf("No available memory left\n");
   return NULL;
 }
 
