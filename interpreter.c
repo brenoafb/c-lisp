@@ -1,49 +1,61 @@
 #include "interpreter.h"
-#include "parser.h"
-#include "utils.h"
+#include "env.h"
+#include <string.h>
 
 expr *eval(env *env, expr *e) {
-  expr *op, *e1, *e2, *result;
-  int x1, x2;
-
   if (e == NULL) {
     return NULL;
   }
 
-  if (is_self_evaluating(e)) {
+  switch (e->tag) {
+  case ATOM:
+    return eval_atom(env, e->c.atom);
+  case CONS:
+    return eval_cons(env, e);
+  default:
     return e;
   }
+}
 
-  /* assuming we have a cons */
+expr *eval_atom(env *env, char *atom) {
+  return lookup(env, atom);
+}
 
-  op = eval(env, car(e));
-  e1 = eval(env, car(cdr(e)));
-  e2 = eval(env, car(cdr(cdr(e))));
+expr *eval_cons(env *env, expr *e) {
+  expr *p, *arg;
+  expr *args[ARG_MAX];
+  int i;
 
-  if (!(op->tag == ATOM && e1->tag == NUM && e2->tag == NUM)) {
-    return NULL;
+  if (is_atom(car(e), "if")) {
+    expr *cond, *conseq, *alt;
+    cond = car(cdr(e));
+    conseq = car(cdr(cdr(e)));
+    alt = car(cdr(cdr(cdr(e))));
+    return eval_if(env, cond, conseq, alt);
   }
 
-  x1 = e1->c.num;
-  x2 = e2->c.num;
+  /* assuming we have a procedure */
+  p = eval(env, car(e));
 
-  result = malloc(sizeof(expr));
-  result->tag = NUM;
+  arg = cdr(e);
+  i = 0;
+  while (!is_nil(arg)) {
+    args[i++] = eval(env, car(arg));
+    arg = cdr(arg);
+  }
 
-  if (is_atom(op, "+")) {
-    result->c.num = x1 + x2;
-  } else if (is_atom(op, "*")) {
-    result->c.num = x1 * x2;
-  } else if (is_atom(op, "-")) {
-    result->c.num = x1 - x2;
-  } else if (is_atom(op, "/")) {
-    result->c.num = x1 / x2;
+  return apply(env, p, args, i);
+}
+
+expr *eval_if(env *env, expr *cond, expr *conseq, expr *alt) {
+  expr *cond_evald;
+
+  cond_evald = eval(env, cond);
+  if (is_false(cond_evald)) {
+    return eval(env, alt);
   } else {
-    free(result);
-    return NULL;
+    return eval(env, conseq);
   }
-
-  return result;
 }
 
 int is_self_evaluating(expr *e) {
@@ -51,7 +63,7 @@ int is_self_evaluating(expr *e) {
   case NIL:
     return 1;
   case ATOM:
-    return 1;
+    return 0;
   case NUM:
     return 1;
   case CONS:
@@ -59,6 +71,21 @@ int is_self_evaluating(expr *e) {
   default:
     return 0;
   }
+}
+
+expr *apply(env *e, expr *p, expr *args[], int n) {
+  if (p->tag == NATIVE) {
+    return apply_native(p->c.f, args, n);
+  }
+
+  e = NULL; /* silence warning */
+
+  /* TODO actual procedure application*/
+  return p;
+}
+
+expr *apply_native(native_func f, expr *args[], int n) {
+  return f(n, args);
 }
 
 void traverse(expr *e) {

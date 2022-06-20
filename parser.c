@@ -19,6 +19,7 @@ int is_atom_start_char(char c) {
     || c == '='
     || c == '<'
     || c == '>'
+    || c == '#'
   );
 }
 
@@ -33,6 +34,7 @@ int is_atom_char(char c) {
     || c == '='
     || c == '<'
     || c == '>'
+    || c == '#'
   );
 }
 
@@ -40,13 +42,16 @@ expr *parse_sexpr(char *s, int len, int *i)
 {
   skip_spaces(s, len, i);
 
+  printf("parse_sexpr (%d)\n", *i);
+  print_state(s, len, i);
+
   if (*i >= len)
     return NULL;
 
   switch (s[*i])
   {
   case ')':
-    /* error: unexpected end of list */
+    printf("parse error: unexpected end of list\n");
     return NULL;
   case '(':
     *i += 1; /* skip '(' */
@@ -74,6 +79,9 @@ expr *parse_atom(char *s, int len, int *i)
   expr *e;
   int j = 0;
 
+  printf("parse_atom (%d)\n", *i);
+  print_state(s, len, i);
+
   if (*i >= len) {
     return NULL;
   }
@@ -95,6 +103,10 @@ expr *parse_num(char *s, int len, int *i)
 {
   expr *e;
   int k = 0;
+
+  printf("parse_num (%d)\n", *i);
+  print_state(s, len, i);
+
   if (*i >= len) {
     return NULL;
   }
@@ -118,9 +130,13 @@ expr *parse_num(char *s, int len, int *i)
 expr *parse_cons(char *s, int len, int *i) {
   expr *curr, *e;
 
+  printf("parse_cons (%d)\n", *i);
+  print_state(s, len, i);
+
   if (s[*i] == ')') {
     e = malloc(sizeof(expr));
     e->tag = NIL;
+    *i += 1;
     return e;
   }
 
@@ -131,4 +147,14 @@ expr *parse_cons(char *s, int len, int *i) {
   curr->c.cell.cdr = parse_cons(s, len, i);
 
   return curr;
+}
+
+void print_state(char *s, int len, int *i) {
+  int j = *i;
+  printf("%s\n", s);
+  while (j-- > 0) {
+    printf(" ");
+  }
+  printf("^");
+  printf("\n");
 }

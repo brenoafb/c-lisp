@@ -24,6 +24,4 @@ expr *parse_cons(char *s, int len, int *i);
 
 expr *parse_sexpr(char *s, int len, int *i);
 
-void print_spaces(int n);
-
-void print_sexpr(expr *e, int indent);
+void print_state(char *s, int len, int *i);

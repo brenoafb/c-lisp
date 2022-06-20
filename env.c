@@ -2,44 +2,52 @@
 
 expr *lookup(env *env, char *key) {
   int i;
+  frame *f;
 
-  if ((i = find_index(env, key)) == -1) {
-    return NULL;
+  f = env->frame;
+
+  while (f) {
+    if ((i = find_index(f, key)) != -1) {
+      return f->values[i];
+    }
+    f = f->next;
   }
 
-  return env->values[i];
+  return NULL;
 }
 
 void insert(env *env, char *key, expr *value) {
+  frame_insert(env->frame, key, value);
+}
+
+void frame_insert(frame *f, char *key, expr *value) {
   int len;
   /* TODO check whether env is full */
   len = strlen(key);
-  env->count++;
-  env->keys[env->count] = malloc(len+1);
-  strcpy(env->keys[env->count], key);
-  env->values[env->count] = value;
+  f->keys[f->count] = malloc(len+1);
+  strcpy(f->keys[f->count], key);
+  f->values[f->count] = value;
+  f->count++;
   return;
 }
 
-void remove(env *env, char *key) {
-  int i, j;
+void push_frame(env *e, frame *f) {
+  frame *t;
 
-  if ((i = find_index(env, key)) == -1) {
-    return;
-  }
-
-  free(env->keys[i]);
-
-  for (j = i; j < env->count - 1; j++) {
-    env->keys[j+1] = env->keys[j];
-    env->values[j+1] = env->values[j];
-  }
+  t = e->frame;
+  e->frame = f;
+  f->next = t;
 }
 
-int find_index(env *env, char *key) {
+void pop_frame(env *e) {
+  /* TODO dealloc frame */
+  e->frame = e->frame->next;
+}
+
+int find_index(frame *f, char *key) {
   int i;
-  for (i = 0; i < env->count; i++) {
-    if (0 == strcmp(key, env->keys[i])) {
+  for (i = 0; i < f->count; i++) {
+    if (0 == strcmp(key, f->keys[i])) {
       return i;
     }
   }

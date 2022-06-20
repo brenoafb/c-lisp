@@ -25,28 +25,29 @@ void print_spaces(int n)
   }
 }
 
-void print_sexpr(expr *e, int indent)
+void print_sexpr(expr *e, int print_inline, int indent)
 {
+  char *sep = print_inline ? " " : "\n";
   if (!e) { return; }
 
-  print_spaces(indent);
+  if (!print_inline) print_spaces(indent);
   switch (e->tag)
   {
   case NIL:
-    printf("nil\n");
+    printf("nil%s", sep);
     break;
   case ATOM:
-    printf("%s\n", e->c.atom);
+    printf("%s%s", e->c.atom, sep);
     break;
   case NUM:
-    printf("%d\n", e->c.num);
+    printf("%d%s", e->c.num, sep);
     break;
   case CONS:
   default:
-    printf("(\n");
-    print_sexpr(e->c.cell.car, indent + 2);
-    print_sexpr(e->c.cell.cdr, indent + 2);
-    print_spaces(indent);
-    printf(")\n");
+    printf("(%s", sep);
+    print_sexpr(e->c.cell.car, print_inline, indent + 2);
+    print_sexpr(e->c.cell.cdr, print_inline, indent + 2);
+    if (!print_inline) print_spaces(indent);
+    printf(")%s", sep);
   }
 }
