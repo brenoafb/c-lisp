@@ -25,4 +25,10 @@ void pop_frame(env *e);
 
 int find_index(frame *f, char *key);
 
-/* TODO write a function to dealloc frames/envs */
+void make_default_env(env *env, frame *f);
+
+expr *func_plus(int n, expr *args[]);
+expr *func_eq(int n, expr *args[]);
+
+
+/* primitives */

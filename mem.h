@@ -4,7 +4,7 @@
 #include "env.h"
 #include "syntax.h"
 
-#define MEMSIZE 128
+#define MEMSIZE 1024
 
 expr mem[MEMSIZE];
 int used[MEMSIZE];

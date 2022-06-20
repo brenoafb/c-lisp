@@ -1,5 +1,6 @@
 #include "interpreter.h"
 #include "env.h"
+#include "utils.h"
 #include <string.h>
 
 expr *eval(env *env, expr *e) {
@@ -156,13 +157,12 @@ expr *apply_procedure(env *e, proc p, expr *args[], int n) {
   pe = (env *) p.env;
   nf = malloc(sizeof(frame));
   nf->count = 0;
+  push_frame(pe, nf);
 
   for (i = 0; i < n; i++) {
-    value = eval(e, args[i]);
-    insert(pe, p.args[i], value);
+    insert(pe, p.args[i], args[i]);
   }
 
-  push_frame(pe, nf);
   result = eval(pe, p.body);
 
   pop_frame(pe);

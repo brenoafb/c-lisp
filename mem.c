@@ -9,17 +9,17 @@ void init_mem() {
 
 expr *alloc() {
   expr *ptr;
-  printf("allocating expr\n");
+  // printf("allocating expr\n");
   // find first unused space
   int i = 0;
   for (; i < MEMSIZE; i++) {
     if (!used[i]) {
-      printf("found free slot at index %d\n", i);
+      // printf("found free slot at index %d\n", i);
       ptr = &mem[i];
       used[i] = 1;
       memused += 1;
-      printf("memory used: %lu/%lu bytes\n", sizeof(expr) * memused, sizeof(expr) * MEMSIZE);
-      print_heap();
+      // printf("memory used: %lu/%lu bytes\n", sizeof(expr) * memused, sizeof(expr) * MEMSIZE);
+      // print_heap();
       return ptr;
     }
   }
