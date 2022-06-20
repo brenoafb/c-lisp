@@ -70,7 +70,7 @@ int main(void)
   env env;
   frame f;
   expr *e, *result;
-  char *s = "(eq (+ 2 1) (+ 1 2))";
+  char *s = "((lambda (x y) (+ x y)) 1 2)";
   int len = strlen(s);
   int i = 0;
 

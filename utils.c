@@ -42,6 +42,12 @@ void print_sexpr(expr *e, int print_inline, int indent)
   case NUM:
     printf("%d%s", e->c.num, sep);
     break;
+  case NATIVE:
+    printf("<native>%s", sep);
+    break;
+  case PROC:
+    printf("<procedure>%s", sep);
+    break;
   case CONS:
   default:
     printf("(%s", sep);

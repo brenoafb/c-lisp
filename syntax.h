@@ -6,7 +6,10 @@
 #define ATOM   1
 #define NUM    2
 #define CONS   3
+#define PROC   5
 #define NATIVE 4
+
+#define ARG_MAX 10
 
 struct expr;
 
@@ -19,11 +22,20 @@ typedef struct cons cons;
 
 typedef struct expr* (*native_func)(int, struct expr *[]);
 
+typedef struct proc {
+  char *name;
+  int n;
+  char *args[ARG_MAX];
+  struct expr *body;
+  void *env; /* cannot use env type due to cyclic deps */
+} proc;
+
 union contents
 {
   char *atom;
   int num;
   cons cell;
+  proc proc;
   native_func f;
 };
 

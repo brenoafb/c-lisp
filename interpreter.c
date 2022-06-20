@@ -34,6 +34,13 @@ expr *eval_cons(env *env, expr *e) {
     return eval_if(env, cond, conseq, alt);
   }
 
+  if (is_atom(car(e), "lambda")) {
+    expr *arglist, *body;
+    arglist = car(cdr(e));
+    body = car(cdr(cdr(e)));
+    return eval_lambda(env, arglist, body);
+  }
+
   /* assuming we have a procedure */
   p = eval(env, car(e));
 
@@ -58,34 +65,77 @@ expr *eval_if(env *env, expr *cond, expr *conseq, expr *alt) {
   }
 }
 
-int is_self_evaluating(expr *e) {
-  switch (e->tag) {
-  case NIL:
-    return 1;
-  case ATOM:
-    return 0;
-  case NUM:
-    return 1;
-  case CONS:
-    return 0;
-  default:
-    return 0;
+expr *eval_lambda(env *env, expr *arglist, expr *body) {
+  int i;
+  expr *proc;
+  expr *arg;
+
+  proc = malloc(sizeof(expr));
+
+  proc->tag = PROC;
+
+  i = 0;
+  while (!is_nil(arglist)) {
+    arg = car(arglist);
+    if (arg->tag != ATOM) {
+      printf("malformed procedure");
+      return NULL;
+    }
+    proc->c.proc.args[i++] = arg->c.atom;
+    arglist = cdr(arglist);
   }
+
+  proc->c.proc.body = body;
+  proc->c.proc.n = i;
+
+  /* for now we just use the pointer to env as the closure */
+  /* thus we have dynamic scope */
+  proc->c.proc.env = env;
+
+  return proc;
 }
 
 expr *apply(env *e, expr *p, expr *args[], int n) {
-  if (p->tag == NATIVE) {
+  switch (p->tag) {
+  case NATIVE:
     return apply_native(p->c.f, args, n);
+  case PROC:
+    return apply_procedure(e, p->c.proc, args, n);
+  default:
+    return NULL;
   }
-
-  e = NULL; /* silence warning */
-
-  /* TODO actual procedure application*/
-  return p;
 }
 
 expr *apply_native(native_func f, expr *args[], int n) {
   return f(n, args);
+}
+
+expr *apply_procedure(env *e, proc p, expr *args[], int n) {
+  int i;
+  frame *nf;
+  env *pe;
+  expr *value, *result;
+
+  /* TODO */
+  if (n != p.n) {
+    printf("Error applying procedure: argument number mismatch\n");
+    return NULL;
+  }
+
+  pe = (env *) p.env;
+  nf = malloc(sizeof(frame));
+
+  for (i = 0; i < n; i++) {
+    value = eval(e, args[i]);
+    insert(pe, p.args[i], value);
+  }
+
+  push_frame(pe, nf);
+  result = eval(pe, p.body);
+
+  pop_frame(pe);
+
+  return result;
 }
 
 void traverse(expr *e) {
@@ -109,5 +159,20 @@ void traverse(expr *e) {
     break;
   default:
     break;
+  }
+}
+
+int is_self_evaluating(expr *e) {
+  switch (e->tag) {
+  case NIL:
+    return 1;
+  case ATOM:
+    return 0;
+  case NUM:
+    return 1;
+  case CONS:
+    return 0;
+  default:
+    return 0;
   }
 }
