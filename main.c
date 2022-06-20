@@ -1,8 +1,12 @@
+#include "bestline.h"
 #include "env.h"
-#include "syntax.h"
-#include "parser.h"
 #include "interpreter.h"
+#include "parser.h"
+#include "syntax.h"
 #include "utils.h"
+#include "mem.h"
+
+#define MAX_SEXPRS 10
 
 expr *func_plus(int n, expr *args[]) {
   int i;
@@ -12,7 +16,7 @@ expr *func_plus(int n, expr *args[]) {
     return NULL;
   }
 
-  result = malloc(sizeof(expr));
+  result = alloc();
   result->tag = NUM;
   result->c.num = 0;
 
@@ -34,7 +38,7 @@ expr *func_eq(int n, expr *args[]) {
     return NULL;
   }
 
-  result = malloc(sizeof(expr));
+  result = alloc();
   result->tag = ATOM;
   result->c.atom = "#t";
 
@@ -51,11 +55,11 @@ expr *func_eq(int n, expr *args[]) {
 void make_default_env(env *env, frame *f) {
   expr *f_plus, *f_eq;
 
-  f_plus = malloc(sizeof(expr));
+  f_plus = alloc();
   f_plus->tag = NATIVE;
   f_plus->c.f = &func_plus;
 
-  f_eq = malloc(sizeof(expr));
+  f_eq = alloc();
   f_eq->tag = NATIVE;
   f_eq->c.f = &func_eq;
 
@@ -65,35 +69,47 @@ void make_default_env(env *env, frame *f) {
   insert(env, "eq", f_eq);
 }
 
-int main(void)
-{
+int main(void) {
   env env;
   frame f;
-  expr *e, *result;
-  char *s = "((lambda (x y) (+ x y)) 1 2)";
-  int len = strlen(s);
-  int i = 0;
-
+  char *line;
+  expr *e[MAX_SEXPRS];
+  expr *result;
+  init_mem();
   make_default_env(&env, &f);
-  e = parse_sexpr(s, len, &i);
-  if (e == NULL)
-  {
-    printf("error\n");
+  f.next = NULL;
+
+  while ((line = bestline("lisp> ")) != NULL) {
+    if (line[0] != '\0') {
+      /* bestlineHistoryAdd(line); /\* Add to the history. *\/ */
+      /* bestlineHistorySave("history.txt"); /\* Save the history on disk. *\/
+       */
+      int len = strlen(line);
+      int i = 0;
+      int j = 0;
+      while (i < len) {
+        e[j] = parse_sexpr(line, len, &i);
+
+        printf("Expr: ");
+        print_sexpr(e[j], 1, 0);
+        printf("\n");
+
+        /* traverse(e[j]); */
+        result = eval(&env, e[j]);
+
+        print_sexpr(result, 1, 0);
+        printf("\n");
+        j++;
+      }
+    }
+    free(line);
+
+    if (memused >= 0.9 * MEMSIZE) {
+      printf("Memory almost full (%lu/%lu bytes); running gc\n", memused * sizeof(expr), MEMSIZE * sizeof(expr));
+      gc(&env);
+      printf("Usage after gc: %lu\n", memused * sizeof(expr));
+    }
   }
-  else
-  {
-    print_sexpr(e, 0, 0);
-    printf("\n");
-
-    traverse(e);
-    result = eval(&env, e);
-
-    printf("Result:\n");
-    print_sexpr(result, 0, 0);
-    printf("\n");
-  }
-
-  dealloc(e);
 
   return 0;
 }

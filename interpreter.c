@@ -41,6 +41,19 @@ expr *eval_cons(env *env, expr *e) {
     return eval_lambda(env, arglist, body);
   }
 
+  if (is_atom(car(e), "quote")) {
+    /* TODO */
+    return eval_quote(car(cdr(e)));
+  }
+
+  if (is_atom(car(e), "define")) {
+    /* TODO */
+    expr *name, *expr;
+    name = car(cdr(e));
+    expr = car(cdr(cdr(e)));
+    return eval_define(env, name, expr);
+  }
+
   /* assuming we have a procedure */
   p = eval(env, car(e));
 
@@ -70,7 +83,7 @@ expr *eval_lambda(env *env, expr *arglist, expr *body) {
   expr *proc;
   expr *arg;
 
-  proc = malloc(sizeof(expr));
+  proc = alloc();
 
   proc->tag = PROC;
 
@@ -93,6 +106,24 @@ expr *eval_lambda(env *env, expr *arglist, expr *body) {
   proc->c.proc.env = env;
 
   return proc;
+}
+
+expr *eval_quote(expr *e) {
+  return e;
+}
+
+expr *eval_define(env *env, expr *name, expr *e) {
+  char *v;
+
+  if (name->tag != ATOM) {
+    printf("Malformed define\n");
+    return NULL;
+  }
+
+  v = name->c.atom;
+  insert(env, v, eval(env, e));
+
+  return nil();
 }
 
 expr *apply(env *e, expr *p, expr *args[], int n) {
@@ -124,6 +155,7 @@ expr *apply_procedure(env *e, proc p, expr *args[], int n) {
 
   pe = (env *) p.env;
   nf = malloc(sizeof(frame));
+  nf->count = 0;
 
   for (i = 0; i < n; i++) {
     value = eval(e, args[i]);
@@ -134,6 +166,7 @@ expr *apply_procedure(env *e, proc p, expr *args[], int n) {
   result = eval(pe, p.body);
 
   pop_frame(pe);
+  free(nf);
 
   return result;
 }
@@ -175,4 +208,10 @@ int is_self_evaluating(expr *e) {
   default:
     return 0;
   }
+}
+
+expr *nil() {
+  expr *n = alloc();
+  n->tag = NIL;
+  return n;
 }

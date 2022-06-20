@@ -6,6 +6,7 @@
 #include <ctype.h>
 
 #include "syntax.h"
+#include "mem.h"
 
 #define BUFSIZE 256
 #define MAX_EXPRS 256

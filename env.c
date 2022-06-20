@@ -40,7 +40,9 @@ void push_frame(env *e, frame *f) {
 }
 
 void pop_frame(env *e) {
-  /* TODO dealloc frame */
+  for (int i = 0; i < e->frame->count; i++) {
+    free(e->frame->keys[i]);
+  }
   e->frame = e->frame->next;
 }
 

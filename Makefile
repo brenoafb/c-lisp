@@ -1,16 +1,16 @@
-CFLAGS = -Wall -pedantic -ansi -I. -g
-DEPS = utils.h parser.h syntax.h interpreter.h env.h
-OBJ = utils.o parser.o syntax.o interpreter.o env.o main.o
+CFLAGS = -Wall -pedantic -I. -g
+DEPS = utils.h bestline.h parser.h syntax.h mem.h interpreter.h env.h 
+OBJ = utils.o bestline.o parser.o syntax.o mem.o interpreter.o env.o  main.o 
 
-all: main
+all: lisp
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-main: $(OBJ)
+lisp: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
-	rm -f ${OBJ} main
+	rm -f ${OBJ} lisp
 
 .PHONY: all clean
