@@ -39,13 +39,16 @@ int main(void) {
     }
     free(line);
 
-    if (memused >= 0.8 * MEMSIZE) {
+    if (memused >= 0.5 * MEMSIZE) {
       printf("Memory almost full (%lu/%lu bytes); running gc\n",
              memused * sizeof(expr), MEMSIZE * sizeof(expr));
+      gc_prepare();
       gc(&env);
-      printf("Usage after gc: %lu\n", memused * sizeof(expr));
+      printf("Usage after gc: %lu bytes\n", memused * sizeof(expr));
     }
   }
 
+  deinit_mem();
+  
   return 0;
 }

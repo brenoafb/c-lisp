@@ -29,6 +29,7 @@ expr *prim_plus(int n, expr *args[]) {
   expr *result;
 
   if (n < 2) {
+    printf("Wrong number of arguments for +\n");
     return NULL;
   }
 
@@ -38,6 +39,7 @@ expr *prim_plus(int n, expr *args[]) {
 
   for (i = 0; i < n; i++) {
     if (args[i]->tag != NUM) {
+      printf("Wrong type of argument for +\n");
       return NULL;
     }
     result->c.num += args[i]->c.num;
@@ -51,6 +53,7 @@ expr *prim_minus(int n, expr *args[]) {
   expr *result;
 
   if (n < 2) {
+    printf("Wrong number of arguments for -\n");
     return NULL;
   }
 
@@ -60,6 +63,7 @@ expr *prim_minus(int n, expr *args[]) {
 
   for (i = 0; i < n; i++) {
     if (args[i]->tag != NUM) {
+      printf("Wrong type of argument for -\n");
       return NULL;
     }
     result->c.num += i == 0 ? args[i]->c.num : -args[i]->c.num;
@@ -73,6 +77,7 @@ expr *prim_eq(int n, expr *args[]) {
   expr *result;
 
   if (n < 2) {
+    printf("Wrong number of arguments for eq\n");
     return NULL;
   }
 
@@ -96,6 +101,7 @@ expr *prim_car(int n, expr *args[]) {
   }
 
   if (args[0]->tag != CONS) {
+    printf("Wrong type of argument for car\n");
     return NULL;
   }
 
@@ -109,6 +115,7 @@ expr *prim_cdr(int n, expr *args[]) {
   }
 
   if (args[0]->tag != CONS) {
+    printf("Wrong type of argument for cdr\n");
     return NULL;
   }
 

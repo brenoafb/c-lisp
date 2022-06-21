@@ -5,6 +5,7 @@
 
 expr *eval(env *env, expr *e) {
   if (e == NULL) {
+    printf("Eval: received NULL expr\n");
     return NULL;
   }
 
@@ -134,6 +135,7 @@ expr *apply(env *e, expr *p, expr *args[], int n) {
   case PROC:
     return apply_procedure(e, p->c.proc, args, n);
   default:
+    printf("apply error: not a procedure\n");
     return NULL;
   }
 }

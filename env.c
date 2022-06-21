@@ -13,6 +13,7 @@ expr *lookup(env *env, char *key) {
     f = f->next;
   }
 
+  printf("Error: no binding for %s\n", key);
   return NULL;
 }
 

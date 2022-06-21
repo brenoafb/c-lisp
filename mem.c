@@ -1,10 +1,18 @@
 #include "mem.h"
 
 void init_mem() {
+  mem = malloc(sizeof(expr) * MEMSIZE);
+  used = malloc(sizeof(int) * MEMSIZE);
+  found = malloc(sizeof(int) * MEMSIZE);
   memused = 0;
   for (int i = 0; i < MEMSIZE; i++) {
     used[i] = 0;
   }
+}
+
+void deinit_mem() {
+  free(mem);
+  free(used);
 }
 
 expr *alloc() {
@@ -28,16 +36,18 @@ expr *alloc() {
   return NULL;
 }
 
-void gc(env *e) {
-  frame *f = e->frame;
-  int found[MEMSIZE];
-
+void gc_prepare() {
   for (int i = 0; i < MEMSIZE; i++) {
     found[i] = 0;
   }
+}
+
+void gc(env *e) {
+  frame *f = e->frame;
 
   while (f) {
     for (int i = 0; i < f->count; i++) {
+      /* printf("gc traversing %s\n", f->keys[i]); */
       gc_traverse(found, f->values[i]);
     }
     f = f->next;
@@ -50,17 +60,20 @@ void gc(env *e) {
       used[i] = 0;
     }
   }
-  
+
   return;
 }
 
 void gc_traverse(int found[], expr *e) {
-  int mi = (e - mem) / sizeof(expr);
-  found[mi] = 1;
+  unsigned long mi = ((unsigned long) e - (unsigned long) mem) / sizeof(expr);
+  /* printf("sizeof(expr): %lu\n", sizeof(expr)); */
+  /* printf("mem: 0x%x, e: 0x%x, mi: %lu\n", mem, e, mi); */
   if (found[mi]) {
     // already visited this node
     return;
   }
+  /* printf("marking %lu as found\n", mi); */
+  found[mi] = 1;
   switch (e->tag) {
   case CONS:
     gc_traverse(found, car(e));
