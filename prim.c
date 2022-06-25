@@ -130,8 +130,8 @@ expr *prim_cons(int n, expr *args[]) {
 
   expr *result = alloc();
   result->tag = CONS;
-  result->c.cell.car = args[1];
-  result->c.cell.cdr = args[2];
+  result->c.cell.car = args[0];
+  result->c.cell.cdr = args[1];
 
   return result;
 }

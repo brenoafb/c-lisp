@@ -20,6 +20,8 @@ int is_atom_start_char(char c) {
     || c == '<'
     || c == '>'
     || c == '#'
+    || c == '!'
+    || c == '?'
   );
 }
 
@@ -35,6 +37,8 @@ int is_atom_char(char c) {
     || c == '<'
     || c == '>'
     || c == '#'
+    || c == '!'
+    || c == '?'
   );
 }
 
@@ -86,6 +90,12 @@ expr *parse_atom(char *s, int len, int *i)
     return NULL;
   }
   e = alloc();
+
+  if (e == NULL) {
+    printf("parse_atom: Alloc error while parsing expression\n");
+    return NULL;
+  }
+
   e->tag = ATOM;
 
   while (*i < len && is_atom_char(s[*i]))
@@ -122,29 +132,56 @@ expr *parse_num(char *s, int len, int *i)
     *i += 1;
   }
   e = alloc();
+
+  if (e == NULL) {
+    printf("parse_num: Alloc error while parsing expression\n");
+    return NULL;
+  }
+
   e->tag = NUM;
   e->c.num = k;
   return e;
 }
 
 expr *parse_cons(char *s, int len, int *i) {
-  expr *curr, *e;
+  expr *curr, *e, *car, *cdr;
 
   /* printf("parse_cons (%d)\n", *i); */
   /* print_state(s, len, i); */
 
   if (s[*i] == ')') {
     e = alloc();
+    if (e == NULL) {
+      printf("parse_cons: Alloc error while parsing expression\n");
+      return NULL;
+    }
     e->tag = NIL;
     *i += 1;
     return e;
   }
 
-  curr = alloc();
-  curr->tag = CONS;
+  car = parse_sexpr(s, len, i);
 
-  curr->c.cell.car = parse_sexpr(s, len, i);
-  curr->c.cell.cdr = parse_cons(s, len, i);
+  if (car == NULL) {
+    printf("parse_cons: error parsing car\n");
+    return NULL;
+  }
+  
+  cdr = parse_cons(s, len, i);
+
+  if (cdr == NULL) {
+    printf("parse_cons: error parsing cdr\n");
+    return NULL;
+  }
+
+  curr = alloc();
+  if (e == NULL) {
+    printf("parse_cons: Alloc error while parsing expression\n");
+    return NULL;
+  }
+  curr->tag = CONS;
+  curr->c.cell.car = car;
+  curr->c.cell.cdr = cdr;
 
   return curr;
 }

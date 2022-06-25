@@ -16,11 +16,10 @@ int main(void) {
   make_default_env(&env, &f);
   f.next = NULL;
 
+  bestlineHistoryLoad("history.txt");
+
   while ((line = bestline("lisp> ")) != NULL) {
     if (line[0] != '\0') {
-      /* bestlineHistoryAdd(line); /\* Add to the history. *\/ */
-      /* bestlineHistorySave("history.txt"); /\* Save the history on disk. *\/
-       */
       int len = strlen(line);
       int i = 0;
       while (i < len) {
@@ -30,22 +29,22 @@ int main(void) {
         print_sexpr(e, 1, 0);
         printf("\n");
 
-        /* traverse(e[j]); */
         result = eval(&env, e);
 
         print_sexpr(result, 1, 0);
         printf("\n");
       }
     }
-    free(line);
 
+    printf("Memory usage: (%lu/%lu bytes)\n",
+           memused * sizeof(expr), MEMSIZE * sizeof(expr));
     if (memused >= 0.5 * MEMSIZE) {
-      printf("Memory almost full (%lu/%lu bytes); running gc\n",
-             memused * sizeof(expr), MEMSIZE * sizeof(expr));
+      printf("Running GC\n");
       gc_prepare();
       gc(&env);
       printf("Usage after gc: %lu bytes\n", memused * sizeof(expr));
     }
+
   }
 
   deinit_mem();
