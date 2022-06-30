@@ -166,7 +166,7 @@ expr *parse_cons(char *s, int len, int *i) {
     printf("parse_cons: error parsing car\n");
     return NULL;
   }
-  
+
   cdr = parse_cons(s, len, i);
 
   if (cdr == NULL) {
@@ -175,7 +175,7 @@ expr *parse_cons(char *s, int len, int *i) {
   }
 
   curr = alloc();
-  if (e == NULL) {
+  if (curr == NULL) {
     printf("parse_cons: Alloc error while parsing expression\n");
     return NULL;
   }

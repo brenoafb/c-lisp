@@ -54,7 +54,7 @@ typedef struct expr expr;
 void expr_to_string(expr *e, char *str);
 expr *car(expr *e);
 expr *cdr(expr *e);
-expr *nil();
+
 int is_atom(expr *e, char *atom);
 int is_num(expr *e, int n);
 int is_true(expr *e);

@@ -44,12 +44,10 @@ expr *eval_cons(env *env, expr *e) {
   }
 
   if (is_atom(car(e), "quote")) {
-    /* TODO */
     return eval_quote(car(cdr(e)));
   }
 
   if (is_atom(car(e), "define")) {
-    /* TODO */
     expr *name, *expr;
     name = car(cdr(e));
     expr = car(cdr(cdr(e)));
@@ -80,10 +78,10 @@ expr *eval_if(env *env, expr *cond, expr *conseq, expr *alt) {
   }
 }
 
-expr *eval_lambda(env *env, expr *arglist, expr *body) {
+expr *eval_lambda(env *e, expr *arglist, expr *body) {
   int i;
-  expr *proc;
-  expr *arg;
+  expr *proc, *arg;
+  env *newenv;
 
   proc = alloc();
 
@@ -96,7 +94,10 @@ expr *eval_lambda(env *env, expr *arglist, expr *body) {
       printf("malformed procedure");
       return NULL;
     }
-    proc->c.proc.args[i++] = arg->c.atom;
+    int len = strlen(arg->c.atom);
+    proc->c.proc.args[i] = malloc(len+1);
+    strcpy(proc->c.proc.args[i], arg->c.atom);
+    i++;
     arglist = cdr(arglist);
   }
 
@@ -105,7 +106,9 @@ expr *eval_lambda(env *env, expr *arglist, expr *body) {
 
   /* for now we just use the pointer to env as the closure */
   /* thus we have dynamic scope */
-  proc->c.proc.env = env;
+  newenv = malloc(sizeof(frame));
+  newenv->frame = e->frame;
+  proc->c.proc.env = newenv;
 
   return proc;
 }
@@ -148,9 +151,8 @@ expr *apply_procedure(env *e, proc p, expr *args[], int n) {
   int i;
   frame *nf;
   env *pe;
-  expr *value, *result;
+  expr *result;
 
-  /* TODO */
   if (n != p.n) {
     printf("Error applying procedure: argument number mismatch\n");
     return NULL;
@@ -216,4 +218,14 @@ expr *nil() {
   expr *n = alloc();
   n->tag = NIL;
   return n;
+}
+
+expr *t() {
+  char *t_str = "#t";
+  int len = strlen(t_str);
+  expr *e = alloc();
+  e->tag = ATOM;
+  e->c.atom = malloc(len+1);
+  strcpy(e->c.atom, t_str);
+  return e;
 }

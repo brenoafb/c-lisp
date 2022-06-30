@@ -1,6 +1,7 @@
 #pragma once
 
 #include "env.h"
+#include "interpreter.h"
 #include "mem.h"
 #include "syntax.h"
 

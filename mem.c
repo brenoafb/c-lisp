@@ -1,5 +1,10 @@
 #include "mem.h"
 
+expr *mem = NULL;
+int *used = NULL;
+int memused = 0;
+int *found = NULL;
+
 void init_mem() {
   mem = malloc(sizeof(expr) * MEMSIZE);
   used = malloc(sizeof(int) * MEMSIZE);
@@ -55,9 +60,7 @@ void gc(env *e) {
 
   for (int i = 0; i < MEMSIZE; i++) {
     if (used[i] && !found[i]) {
-      // TODO dealloc string if atom
-      memused--;
-      used[i] = 0;
+      free_expr(i);
     }
   }
 
@@ -107,4 +110,22 @@ void print_heap() {
       printf("]\n");
     }
   }
+}
+
+void free_expr(int i) {
+  switch (mem[i].tag) {
+    case ATOM:
+      free(mem[i].c.atom);
+      break;
+    case PROC:
+      free(mem[i].c.proc.env);
+      for (int i = 0; i < mem[i].c.proc.n; i++) {
+        free(mem[i].c.proc.args[i]);
+      }
+      break;
+    default:
+      break;
+  }
+  memused--;
+  used[i] = 0;
 }

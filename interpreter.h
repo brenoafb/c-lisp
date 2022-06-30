@@ -22,6 +22,7 @@ expr *apply_procedure(env *e, proc p, expr *args[], int n);
 
 int is_self_evaluating(expr *e);
 
-expr *nil();
-
 void traverse(expr *e);
+
+expr *nil();
+expr *t();

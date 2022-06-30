@@ -74,7 +74,6 @@ expr *prim_minus(int n, expr *args[]) {
 
 expr *prim_eq(int n, expr *args[]) {
   int i;
-  expr *result;
 
   if (n < 2) {
     printf("Wrong number of arguments for eq\n");
@@ -88,10 +87,7 @@ expr *prim_eq(int n, expr *args[]) {
     }
   }
 
-  result = alloc();
-  result->tag = ATOM;
-  result->c.atom = "#t";
-  return result;
+  return t();
 }
 
 expr *prim_car(int n, expr *args[]) {

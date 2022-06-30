@@ -6,10 +6,10 @@
 
 #define MEMSIZE 4096
 
-expr *mem;
-int *used;
-int memused;
-int *found;
+extern expr *mem;
+extern int *used;
+extern int memused;
+extern int *found;
 
 void init_mem();
 void deinit_mem();
@@ -18,3 +18,4 @@ void gc(env *e);
 void gc_prepare();
 void gc_traverse(int found[], expr *e);
 void print_heap();
+void free_expr(int i);
