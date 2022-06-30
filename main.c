@@ -45,9 +45,11 @@ int main(void) {
       printf("Usage after gc: %lu bytes\n", memused * sizeof(expr));
     }
 
+    bestlineHistoryAdd(line);
+    bestlineHistorySave("history.txt");
   }
 
   deinit_mem();
-  
+
   return 0;
 }
