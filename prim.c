@@ -7,6 +7,8 @@ prim_entry entries[] = {
   {"car", &prim_car},
   {"cdr", &prim_cdr},
   {"cons", &prim_cons},
+  {"print", &prim_print},
+  {"println", &prim_println},
   {NULL, NULL}
 };
 
@@ -130,4 +132,47 @@ expr *prim_cons(int n, expr *args[]) {
   result->c.cell.cdr = args[1];
 
   return result;
+}
+
+void print_expr(expr *e) {
+  switch (e->tag) {
+    case NIL:
+      printf("nil");
+      break;
+    case ATOM:
+    case STR:
+      printf("%s", e->c.str);
+      break;
+    case NUM:
+      printf("%d", e->c.num);
+      break;
+    case CONS:
+      // TODO
+      printf("<cons>");
+      break;
+    case NATIVE:
+      // TODO
+      printf("<prim>");
+      break;
+    case PROC:
+      // TODO
+      printf("<proc>");
+      break;
+    default:
+      break;
+  }
+}
+
+expr *prim_print(int n, expr *args[]) {
+  for (int i = 0; i < n; i++) {
+    print_expr(args[i]);
+  }
+
+  return nil();
+}
+
+expr *prim_println(int n, expr *args[]) {
+  expr *r = prim_print(n, args);
+  printf("\n");
+  return r;
 }

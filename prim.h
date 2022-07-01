@@ -13,6 +13,8 @@ expr *prim_eq(int n, expr *args[]);
 expr *prim_car(int n, expr *args[]);
 expr *prim_cdr(int n, expr *args[]);
 expr *prim_cons(int n, expr *args[]);
+expr *prim_print(int n, expr *args[]);
+expr *prim_println(int n, expr *args[]);
 
 typedef struct prim_entry {
   char *name;
