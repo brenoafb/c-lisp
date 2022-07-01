@@ -11,7 +11,7 @@ expr *eval(env *env, expr *e) {
 
   switch (e->tag) {
   case ATOM:
-    return eval_atom(env, e->c.atom);
+    return eval_atom(env, e->c.str);
   case CONS:
     return eval_cons(env, e);
   default:
@@ -94,9 +94,9 @@ expr *eval_lambda(env *e, expr *arglist, expr *body) {
       printf("malformed procedure");
       return NULL;
     }
-    int len = strlen(arg->c.atom);
+    int len = strlen(arg->c.str);
     proc->c.proc.args[i] = malloc(len+1);
-    strcpy(proc->c.proc.args[i], arg->c.atom);
+    strcpy(proc->c.proc.args[i], arg->c.str);
     i++;
     arglist = cdr(arglist);
   }
@@ -125,7 +125,7 @@ expr *eval_define(env *env, expr *name, expr *e) {
     return NULL;
   }
 
-  v = name->c.atom;
+  v = name->c.str;
   insert(env, v, eval(env, e));
 
   return nil();
@@ -184,7 +184,7 @@ void traverse(expr *e) {
     printf("nil\n");
     break;
   case ATOM:
-    printf("atom: %s\n", e->c.atom);
+    printf("atom: %s\n", e->c.str);
     break;
   case NUM:
     printf("num: %d\n", e->c.num);
@@ -225,7 +225,7 @@ expr *t() {
   int len = strlen(t_str);
   expr *e = alloc();
   e->tag = ATOM;
-  e->c.atom = malloc(len+1);
-  strcpy(e->c.atom, t_str);
+  e->c.str = malloc(len+1);
+  strcpy(e->c.str, t_str);
   return e;
 }

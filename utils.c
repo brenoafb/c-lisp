@@ -4,7 +4,7 @@ void dealloc(expr *e) {
   if (!e) return;
   switch (e->tag) {
     case ATOM:
-      free(e->c.atom);
+      free(e->c.str);
       break;
     case CONS:
       dealloc(e->c.cell.car);
@@ -37,7 +37,7 @@ void print_sexpr(expr *e, int print_inline, int indent)
     printf("nil%s", sep);
     break;
   case ATOM:
-    printf("%s%s", e->c.atom, sep);
+    printf("%s%s", e->c.str, sep);
     break;
   case NUM:
     printf("%d%s", e->c.num, sep);
@@ -47,6 +47,9 @@ void print_sexpr(expr *e, int print_inline, int indent)
     break;
   case PROC:
     printf("<procedure>%s", sep);
+    break;
+  case STR:
+    printf("\"%s\"%s", e->c.str, sep);
     break;
   case CONS:
   default:

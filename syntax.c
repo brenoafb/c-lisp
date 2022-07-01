@@ -9,7 +9,7 @@ expr *cdr(expr *e) {
 }
 
 int is_atom(expr *e, char *atom) {
-  return e->tag == ATOM && 0 == strcmp(e->c.atom, atom);
+  return e->tag == ATOM && 0 == strcmp(e->c.str, atom);
 }
 
 int is_num(expr *e, int n) {
@@ -41,7 +41,7 @@ int eq(expr *x, expr *y) {
   case NIL:
     return is_nil(y);
   case ATOM:
-    return is_atom(y, x->c.atom);
+    return is_atom(y, x->c.str);
   case NUM:
     return is_num(y, x->c.num);
   default:

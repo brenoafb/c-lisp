@@ -115,7 +115,8 @@ void print_heap() {
 void free_expr(int i) {
   switch (mem[i].tag) {
     case ATOM:
-      free(mem[i].c.atom);
+    case STR:
+      free(mem[i].c.str);
       break;
     case PROC:
       free(mem[i].c.proc.env);

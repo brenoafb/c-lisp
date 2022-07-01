@@ -7,8 +7,9 @@
 #define ATOM   1
 #define NUM    2
 #define CONS   3
-#define PROC   5
 #define NATIVE 4
+#define PROC   5
+#define STR    6
 
 #define ARG_MAX 10
 
@@ -24,7 +25,7 @@ typedef struct cons cons;
 typedef struct expr* (*native_func)(int, struct expr *[]);
 
 typedef struct proc {
-  char *name;
+  char *name; // not used at the moment
   int n;
   char *args[ARG_MAX];
   struct expr *body;
@@ -33,7 +34,7 @@ typedef struct proc {
 
 union contents
 {
-  char *atom;
+  char *str;
   int num;
   cons cell;
   proc proc;

@@ -60,6 +60,8 @@ expr *parse_sexpr(char *s, int len, int *i)
   case '(':
     *i += 1; /* skip '(' */
     return parse_cons(s, len, i);
+  case '"':
+    return parse_str(s, len, i);
   default:
     if (is_atom_start_char(s[*i]))
     {
@@ -103,9 +105,9 @@ expr *parse_atom(char *s, int len, int *i)
     buffer[j++] = s[*i];
     *i += 1;
   }
-  e->c.atom = malloc(j + 1);
-  e->c.atom[j] = '\0';
-  memcpy(e->c.atom, buffer, j);
+  e->c.str = malloc(j + 1);
+  e->c.str[j] = '\0';
+  memcpy(e->c.str, buffer, j);
   return e;
 }
 
@@ -184,6 +186,51 @@ expr *parse_cons(char *s, int len, int *i) {
   curr->c.cell.cdr = cdr;
 
   return curr;
+}
+
+expr *parse_str(char *s, int len, int *i) {
+  if (s[*i] != '"') {
+    printf("parse_str: first character is not \"\n");
+  }
+
+  *i += 1;
+
+  int start = *i; // one char after "
+
+  if (*i > len) {
+    printf("parse_str: malformed string literal\n");
+    return NULL;
+  }
+
+  while (s[*i] != '"') {
+    if (*i >= len) {
+      printf("parse_str: malformed string literal\n");
+      return NULL;
+    }
+    *i += 1;
+  }
+  int end = *i;
+
+  int n = end - start;
+  char *read_str = malloc(n + 1);
+  memcpy(read_str, s + start, n);
+  read_str[n] = 0;
+
+  expr *e = alloc();
+
+  if (e == NULL) {
+    printf("parse_str: Alloc error while parsing string literal\n");
+    free(read_str);
+    return NULL;
+  }
+
+  e->tag = STR;
+  e->c.str = read_str;
+
+  // skip over closing "
+  *i += 1;
+
+  return e;
 }
 
 void print_state(char *s, int len, int *i) {
