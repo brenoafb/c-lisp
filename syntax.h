@@ -25,7 +25,7 @@ typedef struct cons cons;
 typedef struct expr* (*native_func)(int, struct expr *[]);
 
 typedef struct proc {
-  char *name; // not used at the moment
+  char *name; /* not used at the moment */
   int n;
   char *args[ARG_MAX];
   struct expr *body;

@@ -37,10 +37,12 @@ void skip_space(char *buffer, int *i) {
 }
 
 expr *parse_expr(char *buffer, int len, int *i) {
-  expr *curr = malloc(sizeof(expr));
-
+  expr *curr;
   char op;
   int n;
+
+  curr = malloc(sizeof(expr));
+
   while (*i < len) {
     skip_space(buffer, i);
     switch (buffer[*i]) {
@@ -104,7 +106,8 @@ int eval(expr *e) {
 }
 
 void print_spaces(int n) {
-  for (int i = 0; i < n; i++) {
+  int i;
+  for (i = 0; i < n; i++) {
     printf(" ");
   }
   return;
@@ -140,20 +143,22 @@ void dealloc(expr *e) {
 
 int main(void) {
   char buffer[SIZE];
+  int len;
+  int i = 0;
+  expr *e;
 
   scanf("%[^\n]", buffer);
-  int len = strlen(buffer);
+  len = strlen(buffer);
 
 
-  int i = 0;
-  expr *e = parse_expr(buffer, len, &i);
+  i = 0;
+  e = parse_expr(buffer, len, &i);
 
   print_expr(e, 0);
 
   printf("%d\n", eval(e));
 
   dealloc(e);
-
 
   return 0;
 }

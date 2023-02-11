@@ -6,11 +6,13 @@ int memused = 0;
 int *found = NULL;
 
 void init_mem() {
+  int i;
+
   mem = malloc(sizeof(expr) * MEMSIZE);
   used = malloc(sizeof(int) * MEMSIZE);
   found = malloc(sizeof(int) * MEMSIZE);
   memused = 0;
-  for (int i = 0; i < MEMSIZE; i++) {
+  for (i = 0; i < MEMSIZE; i++) {
     used[i] = 0;
   }
 }
@@ -22,17 +24,17 @@ void deinit_mem() {
 
 expr *alloc() {
   expr *ptr;
-  // printf("allocating expr\n");
-  // find first unused space
-  int i = 0;
-  for (; i < MEMSIZE; i++) {
+  /* printf("allocating expr\n"); */
+  /* find first unused space */
+  int i;
+  for (i = 0; i < MEMSIZE; i++) {
     if (!used[i]) {
-      // printf("found free slot at index %d\n", i);
+      /* printf("found free slot at index %d\n", i); */
       ptr = &mem[i];
       used[i] = 1;
       memused += 1;
-      // printf("memory used: %lu/%lu bytes\n", sizeof(expr) * memused, sizeof(expr) * MEMSIZE);
-      // print_heap();
+      /* printf("memory used: %lu/%lu bytes\n", sizeof(expr) * memused, sizeof(expr) * MEMSIZE); */
+      /* print_heap(); */
       return ptr;
     }
   }
@@ -42,23 +44,27 @@ expr *alloc() {
 }
 
 void gc_prepare() {
-  for (int i = 0; i < MEMSIZE; i++) {
+  int i;
+  for (i = 0; i < MEMSIZE; i++) {
     found[i] = 0;
   }
 }
 
 void gc(env *e) {
-  frame *f = e->frame;
+  int i;
+  frame *f;
+
+  f = e->frame;
 
   while (f) {
-    for (int i = 0; i < f->count; i++) {
+    for (i = 0; i < f->count; i++) {
       /* printf("gc traversing %s\n", f->keys[i]); */
       gc_traverse(found, f->values[i]);
     }
     f = f->next;
   }
 
-  for (int i = 0; i < MEMSIZE; i++) {
+  for (i = 0; i < MEMSIZE; i++) {
     if (used[i] && !found[i]) {
       free_expr(i);
     }
@@ -72,7 +78,7 @@ void gc_traverse(int found[], expr *e) {
   /* printf("sizeof(expr): %lu\n", sizeof(expr)); */
   /* printf("mem: 0x%x, e: 0x%x, mi: %lu\n", mem, e, mi); */
   if (found[mi]) {
-    // already visited this node
+    /* already visited this node */
     return;
   }
   /* printf("marking %lu as found\n", mi); */
@@ -96,8 +102,9 @@ void gc_traverse(int found[], expr *e) {
 }
 
 void print_heap() {
+  int i;
   int rowlen = 64;
-  for (int i = 1; i <= MEMSIZE; i++) {
+  for (i = 1; i <= MEMSIZE; i++) {
     if (i % rowlen == 1) {
       printf("[");
     }
@@ -113,6 +120,7 @@ void print_heap() {
 }
 
 void free_expr(int i) {
+  int j;
   switch (mem[i].tag) {
     case ATOM:
     case STR:
@@ -120,8 +128,8 @@ void free_expr(int i) {
       break;
     case PROC:
       free(mem[i].c.proc.env);
-      for (int i = 0; i < mem[i].c.proc.n; i++) {
-        free(mem[i].c.proc.args[i]);
+      for (j = 0; i < mem[j].c.proc.n; j++) {
+        free(mem[j].c.proc.args[j]);
       }
       break;
     default:

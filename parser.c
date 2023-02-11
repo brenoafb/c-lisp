@@ -83,7 +83,9 @@ expr *parse_atom(char *s, int len, int *i)
 {
   char buffer[BUFSIZE];
   expr *e;
-  int j = 0;
+  int j;
+
+  j = 0;
 
   /* printf("parse_atom (%d)\n", *i); */
   /* print_state(s, len, i); */
@@ -114,7 +116,9 @@ expr *parse_atom(char *s, int len, int *i)
 expr *parse_num(char *s, int len, int *i)
 {
   expr *e;
-  int k = 0;
+  int k;
+
+  k = 0;
 
   /* printf("parse_num (%d)\n", *i); */
   /* print_state(s, len, i); */
@@ -189,13 +193,17 @@ expr *parse_cons(char *s, int len, int *i) {
 }
 
 expr *parse_str(char *s, int len, int *i) {
+  int start, end, n;
+  char *read_str;
+  expr *e;
+
   if (s[*i] != '"') {
     printf("parse_str: first character is not \"\n");
   }
 
   *i += 1;
 
-  int start = *i; // one char after "
+  start = *i; /* one char after " */
 
   if (*i > len) {
     printf("parse_str: malformed string literal\n");
@@ -209,14 +217,14 @@ expr *parse_str(char *s, int len, int *i) {
     }
     *i += 1;
   }
-  int end = *i;
+  end = *i;
 
-  int n = end - start;
-  char *read_str = malloc(n + 1);
+  n = end - start;
+  read_str = malloc(n + 1);
   memcpy(read_str, s + start, n);
   read_str[n] = 0;
 
-  expr *e = alloc();
+  e = alloc();
 
   if (e == NULL) {
     printf("parse_str: Alloc error while parsing string literal\n");
@@ -227,14 +235,16 @@ expr *parse_str(char *s, int len, int *i) {
   e->tag = STR;
   e->c.str = read_str;
 
-  // skip over closing "
+  /* skip over closing " */
   *i += 1;
 
   return e;
 }
 
 void print_state(char *s, int len, int *i) {
-  int j = *i;
+  int j;
+
+  j = *i;
   printf("%s\n", s);
   while (j-- > 0) {
     printf(" ");

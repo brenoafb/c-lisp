@@ -82,6 +82,7 @@ expr *eval_lambda(env *e, expr *arglist, expr *body) {
   int i;
   expr *proc, *arg;
   env *newenv;
+  int len;
 
   proc = alloc();
 
@@ -94,7 +95,7 @@ expr *eval_lambda(env *e, expr *arglist, expr *body) {
       printf("malformed procedure");
       return NULL;
     }
-    int len = strlen(arg->c.str);
+    len = strlen(arg->c.str);
     proc->c.proc.args[i] = malloc(len+1);
     strcpy(proc->c.proc.args[i], arg->c.str);
     i++;
@@ -215,15 +216,21 @@ int is_self_evaluating(expr *e) {
 }
 
 expr *nil() {
-  expr *n = alloc();
+  expr *n;
+
+  n = alloc();
   n->tag = NIL;
   return n;
 }
 
 expr *t() {
-  char *t_str = "#t";
-  int len = strlen(t_str);
-  expr *e = alloc();
+  char *t_str;
+  int len;
+  expr *e;
+
+  t_str = "#t";
+  len = strlen(t_str);
+  e = alloc();
   e->tag = ATOM;
   e->c.str = malloc(len+1);
   strcpy(e->c.str, t_str);

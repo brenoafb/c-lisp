@@ -1147,7 +1147,7 @@ static unsigned Capitalize(unsigned c) {
     return c;
 }
 
-static inline int Bsr(unsigned long long x) {
+static int Bsr(unsigned long long x) {
 #if defined(__GNUC__) && !defined(__STRICT_ANSI__)
     int b;
     b = __builtin_clzll(x);

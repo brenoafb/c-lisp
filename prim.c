@@ -13,15 +13,19 @@ prim_entry entries[] = {
 };
 
 void make_default_env(env *env, frame *f) {
+  int i;
+  expr *fe;
+  prim_entry entry;
+  
   env->frame = f;
-  int i = 0;
-  prim_entry entry = entries[i++];
+
+  i = 0;
+  entry = entries[i++];
   while (entry.name) {
-    expr *f;
-    f = alloc();
-    f->tag = NATIVE;
-    f->c.f = entry.f;
-    insert(env, entry.name, f);
+    fe = alloc();
+    fe->tag = NATIVE;
+    fe->c.f = entry.f;
+    insert(env, entry.name, fe);
     entry = entries[i++];
   }
 }
@@ -121,12 +125,14 @@ expr *prim_cdr(int n, expr *args[]) {
 }
 
 expr *prim_cons(int n, expr *args[]) {
+  expr *result;
+
   if (n != 2) {
     printf("Error: wrong number of arguments for primitive cons\n");
     return NULL;
   }
 
-  expr *result = alloc();
+  result = alloc();
   result->tag = CONS;
   result->c.cell.car = args[0];
   result->c.cell.cdr = args[1];
@@ -147,15 +153,15 @@ void print_expr(expr *e) {
       printf("%d", e->c.num);
       break;
     case CONS:
-      // TODO
+      /* TODO */
       printf("<cons>");
       break;
     case NATIVE:
-      // TODO
+      /* TODO */
       printf("<prim>");
       break;
     case PROC:
-      // TODO
+      /* TODO */
       printf("<proc>");
       break;
     default:
@@ -164,7 +170,8 @@ void print_expr(expr *e) {
 }
 
 expr *prim_print(int n, expr *args[]) {
-  for (int i = 0; i < n; i++) {
+  int i;
+  for (i = 0; i < n; i++) {
     print_expr(args[i]);
   }
 
@@ -172,7 +179,8 @@ expr *prim_print(int n, expr *args[]) {
 }
 
 expr *prim_println(int n, expr *args[]) {
-  expr *r = prim_print(n, args);
+  expr *r;
+  r = prim_print(n, args);
   printf("\n");
   return r;
 }

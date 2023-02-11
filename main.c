@@ -20,8 +20,10 @@ int main(void) {
 
   while ((line = bestline("lisp> ")) != NULL) {
     if (line[0] != '\0') {
-      int len = strlen(line);
+      int len;
       int i = 0;
+      len = strlen(line);
+      i = 0;
       while (i < len) {
         e = parse_sexpr(line, len, &i);
 

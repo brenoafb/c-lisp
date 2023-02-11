@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -pedantic -I. -g
+CFLAGS = -Wall -pedantic -I. -g -std=c89
 DEPS = utils.h bestline.h parser.h syntax.h mem.h interpreter.h prim.h env.h
 OBJ = utils.o bestline.o parser.o syntax.o mem.o interpreter.o prim.o env.o  main.o
 
