@@ -14,4 +14,7 @@ lisp: $(OBJ)
 clean:
 	rm -f ${OBJ} lisp
 
-.PHONY: all clean
+format:
+	clang-format -i *.c *.h
+
+.PHONY: all clean format
