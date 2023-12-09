@@ -18,8 +18,7 @@ int main(void) {
 
   bestlineHistoryLoad("history.txt");
 
-  /* while ((line = bestline("lisp> ")) != NULL) { */
-  while ((line = "(env)") != NULL) {
+  while ((line = bestline("lisp> ")) != NULL) {
     if (line[0] != '\0') {
       int len;
       int i = 0;
@@ -38,8 +37,6 @@ int main(void) {
         printf("\n");
       }
     }
-
-    return 0;
 
     printf("Memory usage: (%lu/%lu bytes)\n", memused * sizeof(expr),
            MEMSIZE * sizeof(expr));
