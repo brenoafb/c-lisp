@@ -1,8 +1,8 @@
 #pragma once
 
+#include "syntax.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "syntax.h"
 
 void dealloc(expr *e);
 

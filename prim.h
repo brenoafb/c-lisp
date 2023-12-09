@@ -1,3 +1,4 @@
+/* primitive procedures */
 #pragma once
 
 #include "env.h"
@@ -7,14 +8,15 @@
 
 void make_default_env(env *env, frame *f);
 
-expr *prim_plus(int n, expr *args[]);
-expr *prim_minus(int n, expr *args[]);
-expr *prim_eq(int n, expr *args[]);
-expr *prim_car(int n, expr *args[]);
-expr *prim_cdr(int n, expr *args[]);
-expr *prim_cons(int n, expr *args[]);
-expr *prim_print(int n, expr *args[]);
-expr *prim_println(int n, expr *args[]);
+expr *prim_plus(env *e, int n, expr *args[]);
+expr *prim_minus(env *e, int n, expr *args[]);
+expr *prim_eq(env *e, int n, expr *args[]);
+expr *prim_car(env *e, int n, expr *args[]);
+expr *prim_cdr(env *e, int n, expr *args[]);
+expr *prim_cons(env *e, int n, expr *args[]);
+expr *prim_print(env *e, int n, expr *args[]);
+expr *prim_println(env *e, int n, expr *args[]);
+expr *prim_env(env *e, int n, expr *args[]);
 
 typedef struct prim_entry {
   char *name;

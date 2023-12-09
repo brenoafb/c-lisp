@@ -19,9 +19,7 @@ expr *eval(env *env, expr *e) {
   }
 }
 
-expr *eval_atom(env *env, char *atom) {
-  return lookup(env, atom);
-}
+expr *eval_atom(env *env, char *atom) { return lookup(env, atom); }
 
 expr *eval_cons(env *env, expr *e) {
   expr *p, *arg;
@@ -96,7 +94,7 @@ expr *eval_lambda(env *e, expr *arglist, expr *body) {
       return NULL;
     }
     len = strlen(arg->c.str);
-    proc->c.proc.args[i] = malloc(len+1);
+    proc->c.proc.args[i] = malloc(len + 1);
     strcpy(proc->c.proc.args[i], arg->c.str);
     i++;
     arglist = cdr(arglist);
@@ -114,9 +112,7 @@ expr *eval_lambda(env *e, expr *arglist, expr *body) {
   return proc;
 }
 
-expr *eval_quote(expr *e) {
-  return e;
-}
+expr *eval_quote(expr *e) { return e; }
 
 expr *eval_define(env *env, expr *name, expr *e) {
   char *v;
@@ -135,7 +131,7 @@ expr *eval_define(env *env, expr *name, expr *e) {
 expr *apply(env *e, expr *p, expr *args[], int n) {
   switch (p->tag) {
   case NATIVE:
-    return apply_native(p->c.f, args, n);
+    return apply_native(e, p->c.f, args, n);
   case PROC:
     return apply_procedure(e, p->c.proc, args, n);
   default:
@@ -144,8 +140,8 @@ expr *apply(env *e, expr *p, expr *args[], int n) {
   }
 }
 
-expr *apply_native(native_func f, expr *args[], int n) {
-  return f(n, args);
+expr *apply_native(env *e, native_func f, expr *args[], int n) {
+  return f(e, n, args);
 }
 
 expr *apply_procedure(env *e, proc p, expr *args[], int n) {
@@ -159,7 +155,7 @@ expr *apply_procedure(env *e, proc p, expr *args[], int n) {
     return NULL;
   }
 
-  pe = (env *) p.env;
+  pe = (env *)p.env;
   nf = malloc(sizeof(frame));
   nf->count = 0;
   push_frame(pe, nf);
@@ -232,7 +228,19 @@ expr *t() {
   len = strlen(t_str);
   e = alloc();
   e->tag = ATOM;
-  e->c.str = malloc(len+1);
+  e->c.str = malloc(len + 1);
   strcpy(e->c.str, t_str);
+  return e;
+}
+
+expr *str(char *s) {
+  int len;
+  expr *e;
+
+  len = strlen(s);
+  e = alloc();
+  e->tag = STR;
+  e->c.str = malloc(len + 1);
+  strcpy(e->c.str, s);
   return e;
 }

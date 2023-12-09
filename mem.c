@@ -33,7 +33,8 @@ expr *alloc() {
       ptr = &mem[i];
       used[i] = 1;
       memused += 1;
-      /* printf("memory used: %lu/%lu bytes\n", sizeof(expr) * memused, sizeof(expr) * MEMSIZE); */
+      /* printf("memory used: %lu/%lu bytes\n", sizeof(expr) * memused,
+       * sizeof(expr) * MEMSIZE); */
       /* print_heap(); */
       return ptr;
     }
@@ -74,7 +75,7 @@ void gc(env *e) {
 }
 
 void gc_traverse(int found[], expr *e) {
-  unsigned long mi = ((unsigned long) e - (unsigned long) mem) / sizeof(expr);
+  unsigned long mi = ((unsigned long)e - (unsigned long)mem) / sizeof(expr);
   /* printf("sizeof(expr): %lu\n", sizeof(expr)); */
   /* printf("mem: 0x%x, e: 0x%x, mi: %lu\n", mem, e, mi); */
   if (found[mi]) {
@@ -108,7 +109,7 @@ void print_heap() {
     if (i % rowlen == 1) {
       printf("[");
     }
-    if (used[i-1]) {
+    if (used[i - 1]) {
       printf("X");
     } else {
       printf(" ");
@@ -122,18 +123,18 @@ void print_heap() {
 void free_expr(int i) {
   int j;
   switch (mem[i].tag) {
-    case ATOM:
-    case STR:
-      free(mem[i].c.str);
-      break;
-    case PROC:
-      free(mem[i].c.proc.env);
-      for (j = 0; i < mem[j].c.proc.n; j++) {
-        free(mem[j].c.proc.args[j]);
-      }
-      break;
-    default:
-      break;
+  case ATOM:
+  case STR:
+    free(mem[i].c.str);
+    break;
+  case PROC:
+    free(mem[i].c.proc.env);
+    for (j = 0; i < mem[j].c.proc.n; j++) {
+      free(mem[j].c.proc.args[j]);
+    }
+    break;
+  default:
+    break;
   }
   memused--;
   used[i] = 0;

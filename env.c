@@ -25,12 +25,13 @@ void frame_insert(frame *f, char *key, expr *value) {
   int len;
   /* TODO check whether env is full */
   if (f->count >= FRAME_SIZE) {
-    printf("frame_insert: error inserting new element into frame: frame is full\n");
+    printf("frame_insert: error inserting new element into frame: frame is "
+           "full\n");
     return;
   }
-  
+
   len = strlen(key);
-  f->keys[f->count] = malloc(len+1);
+  f->keys[f->count] = malloc(len + 1);
   strcpy(f->keys[f->count], key);
   f->values[f->count] = value;
   f->count++;

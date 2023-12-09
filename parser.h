@@ -1,12 +1,12 @@
 #pragma once
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "syntax.h"
 #include "mem.h"
+#include "syntax.h"
 
 #define BUFSIZE 256
 #define MAX_EXPRS 256

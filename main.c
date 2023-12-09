@@ -18,7 +18,8 @@ int main(void) {
 
   bestlineHistoryLoad("history.txt");
 
-  while ((line = bestline("lisp> ")) != NULL) {
+  /* while ((line = bestline("lisp> ")) != NULL) { */
+  while ((line = "(env)") != NULL) {
     if (line[0] != '\0') {
       int len;
       int i = 0;
@@ -38,8 +39,10 @@ int main(void) {
       }
     }
 
-    printf("Memory usage: (%lu/%lu bytes)\n",
-           memused * sizeof(expr), MEMSIZE * sizeof(expr));
+    return 0;
+
+    printf("Memory usage: (%lu/%lu bytes)\n", memused * sizeof(expr),
+           MEMSIZE * sizeof(expr));
     if (memused >= 0.5 * MEMSIZE) {
       printf("Running GC\n");
       gc_prepare();

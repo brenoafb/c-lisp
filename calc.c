@@ -5,7 +5,7 @@
 #define SIZE 1024
 
 #define OP 0
-#define NUM  1
+#define NUM 1
 
 typedef union uexpr {
   int num;
@@ -46,34 +46,34 @@ expr *parse_expr(char *buffer, int len, int *i) {
   while (*i < len) {
     skip_space(buffer, i);
     switch (buffer[*i]) {
-      case '+':
-      case '*':
-      case '-':
-      case '/':
-        op = buffer[*i];
+    case '+':
+    case '*':
+    case '-':
+    case '/':
+      op = buffer[*i];
 
-        *i += 1;
+      *i += 1;
 
-        skip_space(buffer, i);
+      skip_space(buffer, i);
 
-        expr *e1 = parse_expr(buffer, len, i);
-        expr *e2 = parse_expr(buffer, len, i);
+      expr *e1 = parse_expr(buffer, len, i);
+      expr *e2 = parse_expr(buffer, len, i);
 
-        curr->tag = OP;
-        curr->e.op = op;
-        curr->e1 = e1;
-        curr->e2 = e2;
+      curr->tag = OP;
+      curr->e.op = op;
+      curr->e1 = e1;
+      curr->e2 = e2;
 
-        return curr;
-      default:
-        n = parse_num(buffer, len, i);
+      return curr;
+    default:
+      n = parse_num(buffer, len, i);
 
-        curr->tag = NUM;
-        curr->e.num = n;
-        curr->e1 = NULL;
-        curr->e2 = NULL;
+      curr->tag = NUM;
+      curr->e.num = n;
+      curr->e1 = NULL;
+      curr->e2 = NULL;
 
-        return curr;
+      return curr;
     };
   }
 
@@ -84,23 +84,23 @@ int eval(expr *e) {
   int n1;
   int n2;
   switch (e->tag) {
-    case NUM:
-      return e->e.num;
-    case OP:
-      n1 = eval(e->e1);
-      n2 = eval(e->e2);
-      switch (e->e.op) {
-        case '+':
-          return n1 + n2;
-        case '*':
-          return n1 * n2;
-        case '-':
-          return n1 - n2;
-        case '/':
-          return n1 / n2;
-        default:
-          return 0;
-      };
+  case NUM:
+    return e->e.num;
+  case OP:
+    n1 = eval(e->e1);
+    n2 = eval(e->e2);
+    switch (e->e.op) {
+    case '+':
+      return n1 + n2;
+    case '*':
+      return n1 * n2;
+    case '-':
+      return n1 - n2;
+    case '/':
+      return n1 / n2;
+    default:
+      return 0;
+    };
   }
   return 0;
 }
@@ -115,29 +115,29 @@ void print_spaces(int n) {
 
 void print_expr(expr *e, int indent) {
   switch (e->tag) {
-    case OP:
-      print_spaces(indent);
-      printf("%c\n", e->e.op);
-      print_expr(e->e1, indent+2);
-      print_expr(e->e2, indent+2);
-      return;
-    case NUM:
-      print_spaces(indent);
-      printf("%d\n", e->e.num);
-      return;
+  case OP:
+    print_spaces(indent);
+    printf("%c\n", e->e.op);
+    print_expr(e->e1, indent + 2);
+    print_expr(e->e2, indent + 2);
+    return;
+  case NUM:
+    print_spaces(indent);
+    printf("%d\n", e->e.num);
+    return;
   }
 }
 
 void dealloc(expr *e) {
   switch (e->tag) {
-    case OP:
-      dealloc(e->e1);
-      dealloc(e->e2);
-      free(e);
-      return;
-    case NUM:
-      free(e);
-      return;
+  case OP:
+    dealloc(e->e1);
+    dealloc(e->e2);
+    free(e);
+    return;
+  case NUM:
+    free(e);
+    return;
   }
 }
 
@@ -149,7 +149,6 @@ int main(void) {
 
   scanf("%[^\n]", buffer);
   len = strlen(buffer);
-
 
   i = 0;
   e = parse_expr(buffer, len, &i);

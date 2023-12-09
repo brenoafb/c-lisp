@@ -1,49 +1,24 @@
 #include "parser.h"
 
-void skip_spaces(char *s, int len, int *i)
-{
-  while (*i < len && isspace(s[*i]))
-  {
+void skip_spaces(char *s, int len, int *i) {
+  while (*i < len && isspace(s[*i])) {
     *i += 1;
   }
 }
 
 int is_atom_start_char(char c) {
-  return (isalpha(c)
-    || c == '_'
-    || c == '-'
-    || c == '+'
-    || c == '.'
-    || c == '*'
-    || c == '/'
-    || c == '='
-    || c == '<'
-    || c == '>'
-    || c == '#'
-    || c == '!'
-    || c == '?'
-  );
+  return (isalpha(c) || c == '_' || c == '-' || c == '+' || c == '.' ||
+          c == '*' || c == '/' || c == '=' || c == '<' || c == '>' ||
+          c == '#' || c == '!' || c == '?');
 }
 
 int is_atom_char(char c) {
-  return (isalnum(c)
-    || c == '_'
-    || c == '-'
-    || c == '+'
-    || c == '.'
-    || c == '*'
-    || c == '/'
-    || c == '='
-    || c == '<'
-    || c == '>'
-    || c == '#'
-    || c == '!'
-    || c == '?'
-  );
+  return (isalnum(c) || c == '_' || c == '-' || c == '+' || c == '.' ||
+          c == '*' || c == '/' || c == '=' || c == '<' || c == '>' ||
+          c == '#' || c == '!' || c == '?');
 }
 
-expr *parse_sexpr(char *s, int len, int *i)
-{
+expr *parse_sexpr(char *s, int len, int *i) {
   skip_spaces(s, len, i);
 
   /* printf("parse_sexpr (%d)\n", *i); */
@@ -52,8 +27,7 @@ expr *parse_sexpr(char *s, int len, int *i)
   if (*i >= len)
     return NULL;
 
-  switch (s[*i])
-  {
+  switch (s[*i]) {
   case ')':
     printf("parse error: unexpected end of list\n");
     return NULL;
@@ -63,24 +37,19 @@ expr *parse_sexpr(char *s, int len, int *i)
   case '"':
     return parse_str(s, len, i);
   default:
-    if (is_atom_start_char(s[*i]))
-    {
+    if (is_atom_start_char(s[*i])) {
       return parse_atom(s, len, i);
     }
-    if (isdigit(s[*i]))
-    {
+    if (isdigit(s[*i])) {
       return parse_num(s, len, i);
-    }
-    else
-    {
+    } else {
       /* error: invalid character */
       return NULL;
     }
   }
 }
 
-expr *parse_atom(char *s, int len, int *i)
-{
+expr *parse_atom(char *s, int len, int *i) {
   char buffer[BUFSIZE];
   expr *e;
   int j;
@@ -102,8 +71,7 @@ expr *parse_atom(char *s, int len, int *i)
 
   e->tag = ATOM;
 
-  while (*i < len && is_atom_char(s[*i]))
-  {
+  while (*i < len && is_atom_char(s[*i])) {
     buffer[j++] = s[*i];
     *i += 1;
   }
@@ -113,8 +81,7 @@ expr *parse_atom(char *s, int len, int *i)
   return e;
 }
 
-expr *parse_num(char *s, int len, int *i)
-{
+expr *parse_num(char *s, int len, int *i) {
   expr *e;
   int k;
 
@@ -127,10 +94,8 @@ expr *parse_num(char *s, int len, int *i)
     return NULL;
   }
 
-  while (*i < len && !isspace(s[*i]) && s[*i] != ')')
-  {
-    if (!isdigit(s[*i]))
-    {
+  while (*i < len && !isspace(s[*i]) && s[*i] != ')') {
+    if (!isdigit(s[*i])) {
       /* error: found non number character */
       return NULL;
     }
